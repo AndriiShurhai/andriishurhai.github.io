@@ -1,617 +1,659 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Andrii Shurhai — Unity Developer</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #07080f;
-    --bg2: #0d0f1c;
-    --panel: #111527;
-    --border: #1e2540;
-    --teal: #1fb8cc;
-    --teal-dim: #117585;
-    --teal-glow: rgba(31,184,204,0.15);
-    --red: #e05555;
-    --text: #c8d4e8;
-    --text-dim: #6a7a99;
-    --white: #eef2ff;
-    --pixel: 'Press Start 2P', monospace;
-    --body: 'Rajdhani', sans-serif;
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--body);
-    font-size: 17px;
-    line-height: 1.6;
-    overflow-x: hidden;
-  }
-
-  /* Grid background */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(31,184,204,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(31,184,204,0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* Scanlines */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0,0,0,0.08) 2px,
-      rgba(0,0,0,0.08) 4px
-    );
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* =================== NAV =================== */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 48px;
-    height: 60px;
-    background: rgba(7,8,15,0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .nav-logo {
-    font-family: var(--pixel);
-    font-size: 9px;
-    color: var(--teal);
-    letter-spacing: 1px;
-    text-decoration: none;
-  }
-
-  .nav-links {
-    display: flex;
-    gap: 32px;
-    list-style: none;
-  }
-
-  .nav-links a {
-    font-family: var(--body);
-    font-weight: 600;
-    font-size: 13px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-
-  .nav-links a:hover { color: var(--teal); }
-
-  /* =================== HERO =================== */
-  #hero {
-    position: relative;
-    z-index: 1;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 80px 48px 60px;
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-
-  .hero-tag {
-    font-family: var(--pixel);
-    font-size: 8px;
-    color: var(--teal);
-    letter-spacing: 2px;
-    margin-bottom: 32px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .hero-tag::before {
-    content: '';
-    display: inline-block;
-    width: 24px;
-    height: 2px;
-    background: var(--teal);
-  }
-
-  h1 {
-    font-family: var(--pixel);
-    font-size: clamp(22px, 4vw, 42px);
-    color: var(--white);
-    line-height: 1.5;
-    margin-bottom: 24px;
-    text-shadow: 0 0 40px rgba(31,184,204,0.3);
-  }
-
-  h1 span { color: var(--teal); }
-
-  .hero-sub {
-    font-size: 20px;
-    font-weight: 400;
-    color: var(--text-dim);
-    max-width: 560px;
-    margin-bottom: 48px;
-    line-height: 1.7;
-  }
-
-  .hero-cta {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-
-  .btn {
-    font-family: var(--pixel);
-    font-size: 8px;
-    letter-spacing: 1px;
-    padding: 14px 24px;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.2s;
-    cursor: pointer;
-    border: none;
-  }
-
-  .btn-primary {
-    background: var(--teal);
-    color: var(--bg);
-  }
-
-  .btn-primary:hover {
-    background: #29d4ea;
-    box-shadow: 0 0 24px rgba(31,184,204,0.4);
-    transform: translateY(-2px);
-  }
-
-  .btn-outline {
-    background: transparent;
-    color: var(--teal);
-    border: 1px solid var(--teal-dim);
-  }
-
-  .btn-outline:hover {
-    border-color: var(--teal);
-    background: var(--teal-glow);
-    transform: translateY(-2px);
-  }
-
-  .hero-scroll {
-    position: absolute;
-    bottom: 40px;
-    left: 48px;
-    font-family: var(--pixel);
-    font-size: 7px;
-    color: var(--text-dim);
-    letter-spacing: 2px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 0.4; }
-    50% { opacity: 1; }
-  }
-
-  /* =================== SECTIONS =================== */
-  section {
-    position: relative;
-    z-index: 1;
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 80px 48px;
-  }
-
-  .section-header {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    margin-bottom: 56px;
-  }
-
-  .section-num {
-    font-family: var(--pixel);
-    font-size: 8px;
-    color: var(--teal);
-  }
-
-  h2 {
-    font-family: var(--pixel);
-    font-size: clamp(14px, 2vw, 20px);
-    color: var(--white);
-    letter-spacing: 1px;
-  }
-
-  .section-line {
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(90deg, var(--border), transparent);
-  }
-
-  /* =================== PROJECTS =================== */
-  .projects-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2px;
-  }
-
-  .project-card {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    padding: 36px;
-    position: relative;
-    transition: border-color 0.3s, transform 0.3s;
-    overflow: hidden;
-  }
-
-  .project-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 3px;
-    height: 0;
-    background: var(--teal);
-    transition: height 0.3s;
-  }
-
-  .project-card:hover {
-    border-color: var(--teal-dim);
-    transform: translateY(-3px);
-  }
-
-  .project-card:hover::before { height: 100%; }
-
-  .project-card.featured {
-    grid-column: span 2;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-    align-items: start;
-  }
-
-  .card-badge {
-    font-family: var(--pixel);
-    font-size: 7px;
-    color: var(--teal);
-    letter-spacing: 1px;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .card-badge.wip { color: var(--red); }
-
-  .badge-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: currentColor;
-    animation: blink 1.4s ease-in-out infinite;
-  }
-
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.2; }
-  }
-
-  h3 {
-    font-family: var(--body);
-    font-weight: 700;
-    font-size: 22px;
-    color: var(--white);
-    margin-bottom: 12px;
-    line-height: 1.3;
-  }
-
-  .project-desc {
-    font-size: 16px;
-    color: var(--text-dim);
-    margin-bottom: 24px;
-    line-height: 1.7;
-  }
-
-  .project-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 28px;
-  }
-
-  .tag {
-    font-family: var(--pixel);
-    font-size: 7px;
-    padding: 5px 10px;
-    background: rgba(31,184,204,0.08);
-    border: 1px solid rgba(31,184,204,0.2);
-    color: var(--teal);
-    letter-spacing: 0.5px;
-  }
-
-  .project-links {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-
-  .project-link {
-    font-family: var(--pixel);
-    font-size: 7px;
-    color: var(--text-dim);
-    text-decoration: none;
-    letter-spacing: 1px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: color 0.2s;
-    padding: 8px 0;
-    border-bottom: 1px solid transparent;
-  }
-
-  .project-link:hover {
-    color: var(--teal);
-    border-bottom-color: var(--teal);
-  }
-
-  .project-preview {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    aspect-ratio: 16/9;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-    cursor: pointer;
-    text-decoration: none;
-  }
-
-  .project-preview::after {
-    content: '▶';
-    font-size: 28px;
-    color: var(--teal);
-    position: absolute;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-
-  .project-preview:hover::after { opacity: 1; }
-
-  .project-preview:hover .preview-label { opacity: 0; }
-
-  .preview-label {
-    font-family: var(--pixel);
-    font-size: 7px;
-    color: var(--text-dim);
-    letter-spacing: 1px;
-    transition: opacity 0.3s;
-  }
-
-  .preview-corner {
-    position: absolute;
-    width: 12px; height: 12px;
-    border-color: var(--teal-dim);
-    border-style: solid;
-  }
-  .preview-corner.tl { top: 8px; left: 8px; border-width: 1px 0 0 1px; }
-  .preview-corner.tr { top: 8px; right: 8px; border-width: 1px 1px 0 0; }
-  .preview-corner.bl { bottom: 8px; left: 8px; border-width: 0 0 1px 1px; }
-  .preview-corner.br { bottom: 8px; right: 8px; border-width: 0 1px 1px 0; }
-
-  /* =================== SKILLS =================== */
-  .skills-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
-  }
-
-  .skill-group {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    padding: 32px;
-  }
-
-  .skill-group-title {
-    font-family: var(--pixel);
-    font-size: 8px;
-    color: var(--teal);
-    letter-spacing: 1px;
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .skill-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .skill-list li {
-    font-size: 16px;
-    font-weight: 500;
-    color: var(--text);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .skill-list li::before {
-    content: '›';
-    color: var(--teal);
-    font-size: 18px;
-    line-height: 1;
-  }
-
-  /* =================== ABOUT =================== */
-  .about-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 48px;
-    align-items: start;
-  }
-
-  .about-text p {
-    font-size: 18px;
-    color: var(--text-dim);
-    line-height: 1.8;
-    margin-bottom: 20px;
-  }
-
-  .about-text p strong {
-    color: var(--white);
-    font-weight: 600;
-  }
-
-  .stat-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2px;
-  }
-
-  .stat-box {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    padding: 28px 24px;
-    text-align: center;
-  }
-
-  .stat-num {
-    font-family: var(--pixel);
-    font-size: 20px;
-    color: var(--teal);
-    display: block;
-    margin-bottom: 10px;
-  }
-
-  .stat-label {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-dim);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-
-  /* =================== CONTACT =================== */
-  #contact {
-    border-top: 1px solid var(--border);
-  }
-
-  .contact-inner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 32px;
-  }
-
-  .contact-text h2 {
-    margin-bottom: 12px;
-  }
-
-  .contact-text p {
-    font-size: 17px;
-    color: var(--text-dim);
-    max-width: 420px;
-  }
-
-  .contact-links {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    align-items: flex-end;
-  }
-
-  .contact-link {
-    font-family: var(--pixel);
-    font-size: 8px;
-    color: var(--text-dim);
-    text-decoration: none;
-    letter-spacing: 1px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: color 0.2s;
-  }
-
-  .contact-link:hover { color: var(--teal); }
-
-  .contact-link span {
-    width: 20px;
-    height: 1px;
-    background: currentColor;
-    display: inline-block;
-    transition: width 0.2s;
-  }
-
-  .contact-link:hover span { width: 32px; }
-
-  footer {
-    position: relative;
-    z-index: 1;
-    text-align: center;
-    padding: 32px 48px;
-    border-top: 1px solid var(--border);
-    font-family: var(--pixel);
-    font-size: 7px;
-    color: var(--text-dim);
-    letter-spacing: 1px;
-  }
-
-  /* =================== ANIMATIONS =================== */
-  .fade-in {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-
-  .fade-in.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* =================== RESPONSIVE =================== */
-  @media (max-width: 768px) {
-    nav { padding: 0 20px; }
-    .nav-links { display: none; }
-    #hero, section { padding: 60px 20px; }
-    .projects-grid { grid-template-columns: 1fr; }
-    .project-card.featured { grid-column: span 1; grid-template-columns: 1fr; }
-    .skills-grid { grid-template-columns: 1fr; }
-    .about-grid { grid-template-columns: 1fr; }
-    .contact-inner { flex-direction: column; align-items: flex-start; }
-    .contact-links { align-items: flex-start; }
-    h1 { font-size: 18px; }
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Andrii Shurhai — Unity Gameplay Programmer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #07080f;
+      --bg2: #0d0f1c;
+      --panel: #111527;
+      --border: #1e2540;
+      --teal: #1fb8cc;
+      --teal-dim: #117585;
+      --teal-glow: rgba(31, 184, 204, 0.15);
+      --red: #e05555;
+      --text: #c8d4e8;
+      --text-dim: #6a7a99;
+      --white: #eef2ff;
+      --pixel: 'Press Start 2P', monospace;
+      --body: 'Rajdhani', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--body);
+      font-size: 17px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(31, 184, 204, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(31, 184, 204, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Scanlines */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.08) 2px,
+        rgba(0, 0, 0, 0.08) 4px
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* =================== NAV =================== */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 60px;
+      background: rgba(7, 8, 15, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--pixel);
+      font-size: 9px;
+      color: var(--teal);
+      letter-spacing: 1px;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--body);
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--teal); }
+
+    /* =================== HERO =================== */
+    #hero {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px 48px 60px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .hero-tag {
+      font-family: var(--pixel);
+      font-size: 8px;
+      color: var(--teal);
+      letter-spacing: 2px;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hero-tag::before {
+      content: '';
+      display: inline-block;
+      width: 24px;
+      height: 2px;
+      background: var(--teal);
+    }
+
+    h1 {
+      font-family: var(--pixel);
+      font-size: clamp(22px, 4vw, 42px);
+      color: var(--white);
+      line-height: 1.5;
+      margin-bottom: 24px;
+      text-shadow: 0 0 40px rgba(31, 184, 204, 0.3);
+    }
+
+    h1 span { color: var(--teal); }
+
+    .hero-sub {
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--text-dim);
+      max-width: 620px;
+      margin-bottom: 48px;
+      line-height: 1.7;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      font-family: var(--pixel);
+      font-size: 8px;
+      letter-spacing: 1px;
+      padding: 14px 24px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--teal);
+      color: var(--bg);
+    }
+
+    .btn-primary:hover {
+      background: #29d4ea;
+      box-shadow: 0 0 24px rgba(31, 184, 204, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--teal);
+      border: 1px solid var(--teal-dim);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--teal);
+      background: var(--teal-glow);
+      transform: translateY(-2px);
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 40px;
+      left: 48px;
+      font-family: var(--pixel);
+      font-size: 7px;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    /* =================== SECTIONS =================== */
+    section {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 80px 48px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 56px;
+    }
+
+    .section-num {
+      font-family: var(--pixel);
+      font-size: 8px;
+      color: var(--teal);
+    }
+
+    h2 {
+      font-family: var(--pixel);
+      font-size: clamp(14px, 2vw, 20px);
+      color: var(--white);
+      letter-spacing: 1px;
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--border), transparent);
+    }
+
+    /* =================== PROJECTS =================== */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .project-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 34px;
+      position: relative;
+      transition: border-color 0.3s, transform 0.3s;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .project-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px;
+      height: 0;
+      background: var(--teal);
+      transition: height 0.3s;
+    }
+
+    .project-card:hover {
+      border-color: var(--teal-dim);
+      transform: translateY(-3px);
+    }
+
+    .project-card:hover::before { height: 100%; }
+
+    .project-card.featured {
+      grid-column: span 2;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 36px;
+      align-items: center;
+    }
+
+    .card-badge {
+      font-family: var(--pixel);
+      font-size: 7px;
+      color: var(--teal);
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: blink 1.4s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+
+    h3 {
+      font-family: var(--body);
+      font-weight: 700;
+      font-size: 23px;
+      color: var(--white);
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+
+    .project-desc {
+      font-size: 16px;
+      color: var(--text-dim);
+      margin-bottom: 20px;
+      line-height: 1.7;
+    }
+
+    .project-desc strong {
+      color: var(--text);
+    }
+
+    .project-bullets {
+      margin: 0 0 20px 18px;
+      color: var(--text-dim);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .project-bullets li {
+      margin-bottom: 6px;
+    }
+
+    .project-bullets strong {
+      color: var(--text);
+    }
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: auto;
+      margin-bottom: 22px;
+    }
+
+    .tag {
+      font-family: var(--pixel);
+      font-size: 7px;
+      padding: 5px 9px;
+      background: rgba(31, 184, 204, 0.08);
+      border: 1px solid rgba(31, 184, 204, 0.2);
+      color: var(--teal);
+      letter-spacing: 0.5px;
+    }
+
+    .project-links {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .project-link {
+      font-family: var(--pixel);
+      font-size: 7px;
+      color: var(--text-dim);
+      text-decoration: none;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+      padding: 6px 0;
+      border-bottom: 1px solid transparent;
+    }
+
+    .project-link:hover {
+      color: var(--teal);
+      border-bottom-color: var(--teal);
+    }
+
+    .project-link.disabled {
+      opacity: 0.6;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .project-preview {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      aspect-ratio: 16/10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      text-decoration: none;
+      padding: 24px;
+      gap: 10px;
+    }
+
+    .project-preview::after {
+      content: '↗';
+      font-size: 26px;
+      color: var(--teal);
+      position: absolute;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .project-preview:hover::after { opacity: 1; }
+    .project-preview:hover .preview-label,
+    .project-preview:hover .preview-sub { opacity: 0; }
+
+    .preview-label {
+      font-family: var(--pixel);
+      font-size: 8px;
+      color: var(--white);
+      letter-spacing: 1px;
+      text-align: center;
+      transition: opacity 0.3s;
+    }
+
+    .preview-sub {
+      font-size: 14px;
+      color: var(--text-dim);
+      text-align: center;
+      transition: opacity 0.3s;
+    }
+
+    .preview-corner {
+      position: absolute;
+      width: 12px; height: 12px;
+      border-color: var(--teal-dim);
+      border-style: solid;
+    }
+    .preview-corner.tl { top: 8px; left: 8px; border-width: 1px 0 0 1px; }
+    .preview-corner.tr { top: 8px; right: 8px; border-width: 1px 1px 0 0; }
+    .preview-corner.bl { bottom: 8px; left: 8px; border-width: 0 0 1px 1px; }
+    .preview-corner.br { bottom: 8px; right: 8px; border-width: 0 1px 1px 0; }
+
+    /* =================== SKILLS =================== */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .skill-group {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 32px;
+    }
+
+    .skill-group-title {
+      font-family: var(--pixel);
+      font-size: 8px;
+      color: var(--teal);
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .skill-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .skill-list li {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .skill-list li::before {
+      content: '›';
+      color: var(--teal);
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    /* =================== ABOUT =================== */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+
+    .about-text p {
+      font-size: 18px;
+      color: var(--text-dim);
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+
+    .about-text p strong {
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .stat-box {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 26px 20px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: var(--pixel);
+      font-size: 18px;
+      color: var(--teal);
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* =================== CONTACT =================== */
+    #contact {
+      border-top: 1px solid var(--border);
+    }
+
+    .contact-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 32px;
+    }
+
+    .contact-text h2 {
+      margin-bottom: 12px;
+    }
+
+    .contact-text p {
+      font-size: 17px;
+      color: var(--text-dim);
+      max-width: 440px;
+    }
+
+    .contact-links {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: flex-end;
+    }
+
+    .contact-link {
+      font-family: var(--pixel);
+      font-size: 8px;
+      color: var(--text-dim);
+      text-decoration: none;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: color 0.2s;
+    }
+
+    .contact-link:hover { color: var(--teal); }
+
+    .contact-link span {
+      width: 20px;
+      height: 1px;
+      background: currentColor;
+      display: inline-block;
+      transition: width 0.2s;
+    }
+
+    .contact-link:hover span { width: 32px; }
+
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 32px 48px;
+      border-top: 1px solid var(--border);
+      font-family: var(--pixel);
+      font-size: 7px;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+    }
+
+    /* =================== ANIMATIONS =================== */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* =================== RESPONSIVE =================== */
+    @media (max-width: 860px) {
+      .projects-grid { grid-template-columns: 1fr; }
+      .project-card.featured { grid-column: span 1; grid-template-columns: 1fr; }
+      .skills-grid { grid-template-columns: 1fr; }
+      .about-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      #hero, section { padding: 60px 20px; }
+      .contact-inner { flex-direction: column; align-items: flex-start; }
+      .contact-links { align-items: flex-start; }
+      h1 { font-size: clamp(20px, 6vw, 30px); }
+    }
+  </style>
 </head>
 <body>
 
@@ -627,13 +669,13 @@
 
 <!-- HERO -->
 <div id="hero">
-  <div class="hero-tag">Unity Developer</div>
+  <div class="hero-tag">Unity Gameplay Programmer</div>
   <h1>Andrii<br><span>Shurhai</span></h1>
-  <p class="hero-sub">CS student building games — turn-based systems, grid mechanics, and whatever feels interesting to make.</p>
+  <p class="hero-sub">CS student building games — fixed-step simulation, combat systems, turn-based mechanics, and reusable Unity tools.</p>
   <div class="hero-cta">
     <a href="#projects" class="btn btn-primary">View Projects</a>
-    <a href="https://github.com/AndriiShurhai" target="_blank" class="btn btn-outline">GitHub</a>
-    <a href="https://drewio7.itch.io" target="_blank" class="btn btn-outline">itch.io</a>
+    <a href="https://github.com/AndriiShurhai" target="_blank" rel="noopener noreferrer" class="btn btn-outline">GitHub</a>
+    <a href="https://drewio7.itch.io" target="_blank" rel="noopener noreferrer" class="btn btn-outline">itch.io</a>
   </div>
   <div class="hero-scroll">▼ &nbsp; scroll</div>
 </div>
@@ -648,85 +690,135 @@
 
   <div class="projects-grid">
 
-    <!-- Featured: Turn-Based -->
+    <!-- Featured: Little Delay -->
     <div class="project-card featured fade-in">
       <div>
-        <div class="card-badge wip"><div class="badge-dot"></div> In Progress</div>
-        <h3>Turn-Based Strategy Game</h3>
+        <div class="card-badge"><div class="badge-dot"></div> 2026 · Simulation &amp; Combat</div>
+        <h3>Little Delay</h3>
         <p class="project-desc">
-          A tactical strategy game with a full turn-based combat system, grid-based movement, rewind mechanic that lets you step back through any previous game state.
+          Arena-combat prototype built around recording player input and replaying both runs simultaneously in battle. Refactored the gameplay core away from Unity's MonoBehaviour loop into an isolated simulation layer.
         </p>
+        <ul class="project-bullets">
+          <li>Dedicated <strong>LittleDelay.Simulation</strong> assembly running on a 50 Hz fixed-step clock.</li>
+          <li>Tick-indexed deterministic input recording and replay playback.</li>
+          <li>Swept collision checks, projectile deflections, and damage calculations.</li>
+          <li>EditMode NUnit test suite covering replay repeatability and frame alignment.</li>
+        </ul>
         <div class="project-tags">
           <span class="tag">Unity</span>
           <span class="tag">C#</span>
-          <span class="tag">Turn-based</span>
-          <span class="tag">Grid Systems</span>
-          <span class="tag">Scriptable Objects</span>
+          <span class="tag">Fixed-step Sim</span>
+          <span class="tag">Deterministic Replay</span>
+          <span class="tag">NUnit</span>
         </div>
         <div class="project-links">
-          <a href="https://youtu.be/e5P-6PNv0TE?si=5_4BXKgwjGP6Snm0" target="_blank" class="project-link">▶ Gameplay Video</a>
-          <a href="https://github.com/AndriiShurhai/ClashOfWorlds.git" target="_bland" class="project-link">View Source Code</a>
+          <a href="https://github.com/AndriiShurhai/Little-Delay" target="_blank" rel="noopener noreferrer" class="project-link">View Source Code</a>
         </div>
       </div>
-      <a href="https://youtu.be/e5P-6PNv0TE?si=5_4BXKgwjGP6Snm0" target="_blank" class="project-preview">
+      <a href="https://github.com/AndriiShurhai/Little-Delay" target="_blank" rel="noopener noreferrer" class="project-preview">
         <div class="preview-corner tl"></div>
         <div class="preview-corner tr"></div>
         <div class="preview-corner bl"></div>
         <div class="preview-corner br"></div>
-        <span class="preview-label">Watch Gameplay</span>
+        <span class="preview-label">LittleDelay.Simulation</span>
+        <span class="preview-sub">Isolated C# world / 50 Hz clock</span>
       </a>
+    </div>
+
+    <!-- UnityToolkit -->
+    <div class="project-card fade-in">
+      <div class="card-badge"><span>2026 · UPM Package</span></div>
+      <h3>UnityToolkit</h3>
+      <p class="project-desc">
+        Reusable systems library built to eliminate repetitive setup across prototypes. Provides typed event channels, GameObject/object pooling, state machines, cooldown timers, scene management, and audio playback.
+      </p>
+      <div class="project-tags">
+        <span class="tag">C#</span>
+        <span class="tag">UPM</span>
+        <span class="tag">Event Bus</span>
+        <span class="tag">Object Pooling</span>
+        <span class="tag">State Machines</span>
+      </div>
+      <div class="project-links">
+        <span class="project-link disabled">Private Repository</span>
+      </div>
+    </div>
+
+    <!-- Clash of Worlds -->
+    <div class="project-card fade-in">
+      <div class="card-badge"><span>2025–2026 · Solo / Released</span></div>
+      <h3>Clash of Worlds</h3>
+      <p class="project-desc">
+        Dark-fantasy turn-based tactical RPG with grid movement, unit actions, enemy AI, cover and trap rules, and a state-rewind mechanic. Built 12 levels across four biomes for Windows and Android.
+      </p>
+      <div class="project-tags">
+        <span class="tag">Unity 2D</span>
+        <span class="tag">C#</span>
+        <span class="tag">Turn-based</span>
+        <span class="tag">Grid AI</span>
+        <span class="tag">ScriptableObjects</span>
+      </div>
+      <div class="project-links">
+        <a href="https://drewio7.itch.io/clash-of-worlds" target="_blank" rel="noopener noreferrer" class="project-link">🎮 See on itch.io</a>
+        <a href="https://youtu.be/e5P-6PNv0TE" target="_blank" rel="noopener noreferrer" class="project-link">▶ Gameplay Video</a>
+        <a href="https://github.com/AndriiShurhai/ClashOfWorlds" target="_blank" rel="noopener noreferrer" class="project-link">View Source Code</a>
+      </div>
+    </div>
+
+    <!-- Count Your Way Out -->
+    <div class="project-card fade-in">
+      <div class="card-badge"><span>GMTK Game Jam 2026</span></div>
+      <h3>Count Your Way Out</h3>
+      <p class="project-desc">
+        Seven-level puzzle game designed around dual countdown mechanics and a global survival timer. Ranked #981 in Creativity among ~10,600 entries based on 51 ratings.
+      </p>
+      <div class="project-tags">
+        <span class="tag">Unity</span>
+        <span class="tag">C#</span>
+        <span class="tag">Puzzle Design</span>
+        <span class="tag">Game Jam Solo</span>
+      </div>
+      <div class="project-links">
+        <a href="https://drewio7.itch.io/count-your-way-out" target="_blank" rel="noopener noreferrer" class="project-link">🎮 Play on itch.io</a>
+        <a href="https://itch.io/jam/gmtk-jam-2026/rate/4819046" target="_blank" rel="noopener noreferrer" class="project-link">Jam Results</a>
+      </div>
+    </div>
+
+    <!-- Robo Puzzle Prototype -->
+    <div class="project-card fade-in">
+      <div class="card-badge"><span>2026 · Studio Practice</span></div>
+      <h3>Robo Puzzle Prototype</h3>
+      <p class="project-desc">
+        Isometric 3D puzzle prototype using an Observe / Plan / Execute loop. Explores tool-driven interactions and routing mechanics for guiding a robot through puzzle chambers.
+      </p>
+      <div class="project-tags">
+        <span class="tag">Unity 6</span>
+        <span class="tag">C#</span>
+        <span class="tag">3D Puzzle</span>
+        <span class="tag">ScriptableObjects</span>
+      </div>
+      <div class="project-links">
+        <a href="https://drewio7.itch.io/robo-adventure-prototype" target="_blank" rel="noopener noreferrer" class="project-link">🎮 See on itch.io</a>
+        <a href="https://github.com/AndriiShurhai/Robo-Puzzle" target="_blank" rel="noopener noreferrer" class="project-link">View Source Code</a>
+      </div>
     </div>
 
     <!-- Crystal Caverns -->
     <div class="project-card fade-in">
-      <div class="card-badge"><span>2025</span></div>
+      <div class="card-badge"><span>2025 · Team Project</span></div>
       <h3>Crystal Caverns</h3>
-      <p class="project-desc">2D RPG platformer. I was the main programmer on a 3-person team, handling most of the codebase — movement, combat, abilities, and enemy AI.</p>
+      <p class="project-desc">
+        2D RPG platformer built in a three-person team. As lead programmer, I built the player movement, combat feel, abilities, progression, and enemy AI state machines.
+      </p>
       <div class="project-tags">
         <span class="tag">Unity 2D</span>
         <span class="tag">C#</span>
         <span class="tag">Platformer</span>
-        <span class="tag">State Machines</span>
-        <span class="tag">RPG</span>
+        <span class="tag">Enemy AI</span>
       </div>
       <div class="project-links">
-        <a href="https://youtu.be/cOxCRGra170" target="_blank" class="project-link">▶ Gameplay Video</a>
-        <a href="https://github.com/Wenilyks/Crystal-Caverns.git" target="_bland" class="project-link">View Source Code</a>
-      </div>
-    </div>
-
-    <!-- GMTK -->
-    <div class="project-card fade-in">
-      <div class="card-badge"><span>GMTK Game Jam 2025</span></div>
-      <h3>Left Right Up Down And Again</h3>
-      <p class="project-desc">Loop-based puzzle game built solo in 72 hours for GMTK Game Jam 2025. Playable on itch.io.</p>
-      <div class="project-tags">
-        <span class="tag">Unity</span>
-        <span class="tag">C#</span>
-        <span class="tag">Puzzle</span>
-        <span class="tag">Game Jam</span>
-      </div>
-      <div class="project-links">
-        <a href="https://youtu.be/DGMA1R1A6zU" target="_blank" class="project-link">▶ Gameplay Video</a>
-        <a href="https://drewio7.itch.io" target="_blank" class="project-link">🎮 Play on itch.io</a>
-        <a href="https://github.com/AndriiShurhai/GMTK_2025.git" target="_bland" class="project-link">View Source Code</a>
-      </div>
-    </div>
-
-    <!-- City Planner -->
-    <div class="project-card fade-in">
-      <div class="card-badge"><span>2025 — First Project</span></div>
-      <h3>City Planner Simulator</h3>
-      <p class="project-desc">City-building sim with grid placement, resource management, and building upgrades. 70+ scripts — my first big Unity project focused on simulation architecture.</p>
-      <div class="project-tags">
-        <span class="tag">Unity</span>
-        <span class="tag">C#</span>
-        <span class="tag">Simulation</span>
-        <span class="tag">Grid Systems</span>
-      </div>
-      <div class="project-links">
-        <a href="https://youtu.be/DGYw5fG_NxY" target="_blank" class="project-link">▶ Gameplay Video</a>
-        <a href="https://github.com/AndriiShurhai/City-Planner-Simulator-Unity.git" target="_bland" class="project-link">View Source Code</a>
+        <a href="https://youtu.be/cOxCRGra170" target="_blank" rel="noopener noreferrer" class="project-link">▶ Gameplay Video</a>
+        <a href="https://github.com/Wenilyks/Crystal-Caverns" target="_blank" rel="noopener noreferrer" class="project-link">View Source Code</a>
       </div>
     </div>
 
@@ -742,25 +834,36 @@
   </div>
   <div class="skills-grid">
     <div class="skill-group fade-in">
-      <div class="skill-group-title">Game Dev</div>
+      <div class="skill-group-title">Gameplay</div>
       <ul class="skill-list">
         <li>Unity 2D / 3D</li>
-      </ul>
-    </div>
-    <div class="skill-group fade-in">
-      <div class="skill-group-title">Programming</div>
-      <ul class="skill-list">
         <li>C#</li>
-        <li>Python</li>
-        <li>OOP</li>
-        <li>Data Structures & Algorithms</li>
-        <li>System Requirements Analysis</li>
+        <li>Combat Systems &amp; Collision</li>
+        <li>Grid &amp; Turn-Based Systems</li>
+        <li>Gameplay AI</li>
+        <li>Input Recording &amp; Replay</li>
       </ul>
     </div>
     <div class="skill-group fade-in">
-      <div class="skill-group-title">Tools</div>
+      <div class="skill-group-title">Architecture</div>
       <ul class="skill-list">
-        <li>Git & GitHub</li>
+        <li>Fixed-Step Simulation</li>
+        <li>Finite State Machines</li>
+        <li>Event-Driven Architecture</li>
+        <li>ScriptableObject Architecture</li>
+        <li>Object Pooling</li>
+        <li>EditMode Unit Testing (NUnit)</li>
+      </ul>
+    </div>
+    <div class="skill-group fade-in">
+      <div class="skill-group-title">Tools &amp; CS</div>
+      <ul class="skill-list">
+        <li>Git &amp; GitHub</li>
+        <li>Rider / Visual Studio</li>
+        <li>Python</li>
+        <li>Data Structures &amp; Algorithms</li>
+        <li>WPF / .NET</li>
+        <li>PostgreSQL / SQLite</li>
       </ul>
     </div>
   </div>
@@ -775,32 +878,14 @@
   </div>
   <div class="about-grid">
     <div class="about-text fade-in">
-      <p>I'm a third-year <strong>Computer Science student</strong> at Bohdan Khmelnytsky National University of Cherkasy, Ukraine. I've been making games in Unity for a year and a half and have experience in turn-based systems, grid mechanics, state machines, simulations and getting gameplay to feel right.</p>
-      <p>Outside of game dev I do <strong>competitive programming</strong> — I've participated in ICPC SEERC twice (2024 and 2025)</p>
-      <p>I'm looking for a <strong>Unity internship or junior developer role</strong> where I can work on real projects and keep improving.</p>
+      <p>I'm a final-year <strong>Computer Science student</strong> at Bohdan Khmelnytsky National University of Cherkasy, Ukraine, focused on gameplay programming with Unity and C#.</p>
+      <p>I focus on game systems and architecture: decoupling gameplay rules from the rendering layer, building deterministic mechanics, and writing tests to keep systems reliable.</p>
+      <p>Outside of game dev, I do <strong>competitive programming</strong> — I've participated in ICPC SEERC twice (2024 and 2025) and develop desktop tools with C#/.NET alongside my Unity projects.</p>
+      <p>I'm looking for a <strong>junior Unity or gameplay programmer role</strong> where I can work on real systems and keep improving with a team.</p>
       <div style="margin-top: 28px;">
         <a href="mailto:shurgaiandrew335@gmail.com" class="btn btn-primary" style="font-size:7px;">Get in Touch</a>
       </div>
     </div>
-    <div class="stat-grid fade-in">
-      <div class="stat-box">
-        <span class="stat-num">4</span>
-        <span class="stat-label">Projects</span>
-      </div>
-      <div class="stat-box">
-        <span class="stat-num">1+</span>
-        <span class="stat-label">Year in Unity</span>
-      </div>
-      <div class="stat-box">
-        <span class="stat-num">ICPC</span>
-        <span class="stat-label">SEERC ×2</span>
-      </div>
-      <div class="stat-box">
-        <span class="stat-num">72H</span>
-        <span class="stat-label">Game Jam Solo</span>
-      </div>
-    </div>
-  </div>
 </section>
 
 <!-- CONTACT -->
@@ -808,12 +893,12 @@
   <div class="contact-inner">
     <div class="contact-text">
       <h2>Contact</h2>
-      <p>Open to internships and junior roles. Feel free to reach out.</p>
+      <p>Open to junior gameplay programming roles and internships. Feel free to reach out.</p>
     </div>
     <div class="contact-links">
       <a href="mailto:shurgaiandrew335@gmail.com" class="contact-link"><span></span>shurgaiandrew335@gmail.com</a>
-      <a href="https://github.com/AndriiShurhai" target="_blank" class="contact-link"><span></span>github.com/AndriiShurhai</a>
-      <a href="https://drewio7.itch.io" target="_blank" class="contact-link"><span></span>drewio7.itch.io</a>
+      <a href="https://github.com/AndriiShurhai" target="_blank" rel="noopener noreferrer" class="contact-link"><span></span>github.com/AndriiShurhai</a>
+      <a href="https://drewio7.itch.io" target="_blank" rel="noopener noreferrer" class="contact-link"><span></span>drewio7.itch.io</a>
     </div>
   </div>
 </section>
